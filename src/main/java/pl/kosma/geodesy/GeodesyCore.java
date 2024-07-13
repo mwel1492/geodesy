@@ -10,12 +10,15 @@ import net.minecraft.block.enums.BlockFace;
 import net.minecraft.block.enums.BlockHalf;
 import net.minecraft.block.enums.StructureBlockMode;
 import net.minecraft.block.enums.WireConnection;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.registry.Registry;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.state.property.Properties;
 import net.minecraft.text.Text;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.Pair;
 import net.minecraft.util.math.BlockBox;
 import net.minecraft.util.math.BlockPos;
@@ -35,7 +38,6 @@ import java.util.stream.Collectors;
 import static net.minecraft.block.Block.NOTIFY_LISTENERS;
 
 public class GeodesyCore {
-
     // Build-time adjustments.
     static final int BUILD_MARGIN = 16;
     static final int WALL_OFFSET = 2;
@@ -62,23 +64,91 @@ public class GeodesyCore {
 
     public void geodesyGeodesy() {
         sendCommandFeedback("Welcome to Geodesy!");
-        sendCommandFeedback("Read the book for all the gory details.");
+        sendCommandFeedback("Type /geodesy guide for further information.");
         fillHotbar();
+    }
+
+    public void guide() {
+        sendCommandFeedback(
+                "Step 1:\n"
+                 +
+                "Scout out a nice, healthy geode.\n" +
+                "\n" +
+                "Paradoxically, a big geode is more difficult to farm than a small one.\n" +
+                "\n" +
+                "Curb your greed and you will be rewarded.");
+        sendCommandFeedback("\nStep 2:\n" +
+                "/geodesy area <xyz> <xyz>\n" +
+                "\n" +
+                "Mark the corners of the area that contains a geode. You don't have to be exact.\n" +
+                "\n" +
+                "Spectator Mode and Tab completion are your friends.");
+        sendCommandFeedback("\nStep 3:\n" +
+                "/geodesy analyze\n" +
+                "\n" +
+                "For smaller geodes you don't need all three projections to get high efficiency.\n" +
+                "\n" +
+                "Less effort, same reward!");
+        sendCommandFeedback("\nStep 4:\n" +
+                "/geodesy project <directions>\n" +
+                "\n" +
+                "For your convenience, you can adjust those without changing the efficiency of the farm:\n" +
+                "\n" +
+                "- Swap north/soth\n" +
+                "- Swap east/west\n" +
+                "- Swap up/down\n" +
+                "- Change order of directions");
+        sendCommandFeedback("\nStep 5:\n" +
+                "\n" +
+                "Place sticky block structures on the sides of the farm. All moss blocks and no crying obsidian blocks should be covered.\n" +
+                "\n" +
+                "It's a bit like sudoku.");
+        sendCommandFeedback("\nStep 6:\n" +
+                "\n" +
+                "Place mob heads as markers indicating where the flying machines should go. See the Curseforge mod page for details.\n" +
+                "\n" +
+                "Just don't summon a wither!");
+        sendCommandFeedback("\nStep 7:\n" +
+                "/geodesy assemble\n" +
+                "\n" +
+                "Once you are satisfied with the layout, assemble the farm and see the flying machines in their full glory.\n" +
+                "\n" +
+                "The Beast is Ready.");
+        sendCommandFeedback("\nStep 8:\n" +
+                "\n" +
+                "Now the boring part: for trigger wiring, collection system, etc. Follow ilmango's video.\n" +
+                "\n" +
+                "I won't hold your hand.\n" +
+                "\n" +
+                "\n" +
+                "\n" +
+                "                ...unless?");
+        sendCommandFeedback("\nStep 9:\n" +
+                "\n" +
+                "There is no step 9.\n" +
+                "\n" +
+                "\n" +
+                "\n" +
+                "\n" +
+                "Feeling lost?\n" +
+                "\n" +
+                "Check out the mod page on Curseforge for screenshots and more detailed instructions.");
+
     }
 
     private void fillHotbar() {
         ServerPlayerEntity player = this.player.get();
         if (player == null)
             return;
-        player.getInventory().setStack(0, UnholyBookOfGeodesy.summonKrivbeknih());
-        player.getInventory().setStack(1, Items.SLIME_BLOCK.getDefaultStack());
-        player.getInventory().setStack(2, Items.HONEY_BLOCK.getDefaultStack());
-        player.getInventory().setStack(3, Items.WITHER_SKELETON_SKULL.getDefaultStack());
-        player.getInventory().setStack(4, Items.ZOMBIE_HEAD.getDefaultStack());
+
+        player.getInventory().setStack(0, Items.SLIME_BLOCK.getDefaultStack());
+        player.getInventory().setStack(1, Items.HONEY_BLOCK.getDefaultStack());
+        player.getInventory().setStack(2, Items.WITHER_SKELETON_SKULL.getDefaultStack());
+        player.getInventory().setStack(3, Items.ZOMBIE_HEAD.getDefaultStack());
+        player.getInventory().setStack(4, Items.AIR.getDefaultStack());
         player.getInventory().setStack(5, Items.AIR.getDefaultStack());
         player.getInventory().setStack(6, Items.AIR.getDefaultStack());
-        player.getInventory().setStack(7, Items.AIR.getDefaultStack());
-        player.getInventory().setStack(8, Items.POISONOUS_POTATO.getDefaultStack());
+        player.getInventory().setStack(7, Items.POISONOUS_POTATO.getDefaultStack());
     }
 
     void geodesyArea(ServerWorld world, BlockPos startPos, BlockPos endPos) {

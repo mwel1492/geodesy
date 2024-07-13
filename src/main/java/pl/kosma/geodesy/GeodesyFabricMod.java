@@ -39,7 +39,7 @@ public class GeodesyFabricMod implements ModInitializer {
 
     @Override
     public void onInitialize() {
-        ArgumentTypeRegistry.registerArgumentType(new Identifier("geodesy", "direction"), DirectionArgumentType.class, ConstantArgumentSerializer.of(DirectionArgumentType::direction));
+        ArgumentTypeRegistry.registerArgumentType(Identifier.of("geodesy", "direction"), DirectionArgumentType.class, ConstantArgumentSerializer.of(DirectionArgumentType::direction));
         CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
             dispatcher.register(literal("geodesy")
                     .requires(source -> source.hasPermissionLevel(2))
@@ -151,17 +151,30 @@ public class GeodesyFabricMod implements ModInitializer {
                             throw (e);
                         }
                     }))
+                            .then(literal("guide").executes(context -> {
+                                try {
+                                    GeodesyCore core = getPerPlayerCore(context.getSource().getPlayer());
+                                    context.getSource().getServer().execute(() -> core.guide());
+                                    return SINGLE_SUCCESS;
+                                }
+                                catch (Exception e) {
+                                    LOGGER.error("guide", e);
+                                    throw (e);
+                                }
+                            }))
                     .executes(context -> {
                         try {
                             GeodesyCore core = getPerPlayerCore(context.getSource().getPlayer());
                             context.getSource().getServer().execute(() -> core.geodesyGeodesy());
                             return SINGLE_SUCCESS;
                         }
+
                         catch (Exception e) {
                             LOGGER.error("geodesy", e);
                             throw (e);
                         }
                     })
+
             );
         });
     }
